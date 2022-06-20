@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const generator = require('generate-password');
+const { readFile } = require('./helpers/readWriteFile');
+const { validateLogin } = require('./middleware/validations');
 
 const app = express();
 app.use(bodyParser.json());
-
-const { readFile } = require('./helpers/readWriteFile');
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -18,6 +19,7 @@ app.listen(PORT, () => {
   console.log('Online');
 });
 
+// Requisito 01
 app.get('/talker', async (_req, res) => {
   const data = await readFile();
   if (data.lenght === 0) {
@@ -27,6 +29,7 @@ app.get('/talker', async (_req, res) => {
   }
 });
 
+// Requisito 02
 app.get('/talker/:id', async (req, res) => {
   const data = await readFile();
   const { id } = req.params;
@@ -38,4 +41,10 @@ app.get('/talker/:id', async (req, res) => {
   } else {
     res.status(200).json(targetTalker);
   }
+});
+
+// Requisito 03
+app.post('/login', validateLogin, (_req, res) => {
+  const token = generator.generate({ length: 16, numbers: true });
+  res.status(200).json({ token });
 });
