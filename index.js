@@ -1,8 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const generator = require('generate-password');
-const { readFile } = require('./helpers/readWriteFile');
-const { validateLogin } = require('./middleware/validations');
+const { readFile, writeFile } = require('./helpers/readWriteFile');
+const {
+  validateLogin,
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkField,
+  validateWatchedAt,
+  validateRate,
+} = require('./middleware/validations');
 
 const app = express();
 app.use(bodyParser.json());
@@ -10,7 +18,7 @@ app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
-// não remova esse endpoint, é para o avaliador funcionar
+// Não remova esse endpoint, é para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
@@ -47,4 +55,29 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', validateLogin, (_req, res) => {
   const token = generator.generate({ length: 16, numbers: true });
   res.status(200).json({ token });
+});
+
+// Requisito 04
+app.post('/talker',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkField,
+  validateWatchedAt,
+  validateRate,
+  async (req, res) => {
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const data = await readFile();
+  data.push({ id: data.length + 1, name, age, talk: { watchedAt, rate } });
+  await writeFile(data);
+
+  res.status(201).json({
+    id: data.length,
+    name,
+    age,
+    talk: {
+      watchedAt,
+      rate,
+    },
+  });
 });
