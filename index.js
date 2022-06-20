@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-const { readFile, _writeFile } = require('./helpers/readWriteFile');
+const { readFile } = require('./helpers/readWriteFile');
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -31,11 +31,11 @@ app.get('/talker/:id', async (req, res) => {
   const data = await readFile();
   const { id } = req.params;
 
-  const talker = data.find((talker) => Number(talker.id) === Number(id));
+  const targetTalker = data.find((talker) => Number(talker.id) === Number(id));
 
-  if (!talker) {
-    res.status(404).json({ message: "Pessoa palestrante não encontrada"});
+  if (!targetTalker) {
+    res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   } else {
-    res.status(200).json(talker);
+    res.status(200).json(targetTalker);
   }
-})
+});
