@@ -51,13 +51,13 @@ app.get('/talker/:id', async (req, res) => {
   }
 });
 
-// Requisito 03
+// Requisito 03 e 04
 app.post('/login', validateLogin, (_req, res) => {
   const token = generator.generate({ length: 16, numbers: true });
   res.status(200).json({ token });
 });
 
-// Requisito 04
+// Requisito 05
 app.post('/talker',
   validateToken,
   validateName,
@@ -75,6 +75,33 @@ app.post('/talker',
     id: data.length,
     name,
     age,
+    talk: {
+      watchedAt,
+      rate,
+    },
+  });
+});
+
+// Requisito 06
+app.put('/talker/:id',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkField,
+  validateWatchedAt,
+  validateRate,
+  async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const data = await readFile();
+  const talkerId = data.findIndex((talker) => Number(talker.id) === Number(id));
+  data[talkerId] = { name, age, id: Number(id), talk: { watchedAt, rate } };
+  await writeFile(data);
+
+  res.status(200).json({
+    name,
+    age,
+    id: Number(id),
     talk: {
       watchedAt,
       rate,
