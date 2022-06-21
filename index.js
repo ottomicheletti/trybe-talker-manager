@@ -37,6 +37,20 @@ app.get('/talker', async (_req, res) => {
   }
 });
 
+// Requisito 08
+app.get('/talker/search',
+  validateToken,
+  async (req, res) => {
+  const { q } = req.query;
+  const data = await readFile();
+  const talkers = data.filter((talker) => talker.name.toLowerCase().includes(q.toLowerCase()));
+
+  if (!q) return res.status(200).json(data);
+  if (!talkers) return res.status(200).json([]);
+
+  res.status(200).json(talkers);
+});
+
 // Requisito 02
 app.get('/talker/:id', async (req, res) => {
   const data = await readFile();
