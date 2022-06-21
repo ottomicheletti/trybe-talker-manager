@@ -94,8 +94,8 @@ app.put('/talker/:id',
   const { id } = req.params;
   const { name, age, talk: { watchedAt, rate } } = req.body;
   const data = await readFile();
-  const talkerId = data.findIndex((talker) => Number(talker.id) === Number(id));
-  data[talkerId] = { name, age, id: Number(id), talk: { watchedAt, rate } };
+  const talkerIndex = data.findIndex((talker) => Number(talker.id) === Number(id));
+  data[talkerIndex] = { name, age, id: Number(id), talk: { watchedAt, rate } };
   await writeFile(data);
 
   res.status(200).json({
@@ -107,4 +107,17 @@ app.put('/talker/:id',
       rate,
     },
   });
+});
+
+// Requisito 07
+app.delete('/talker/:id',
+  validateToken,
+  async (req, res) => {
+  const { id } = req.params;
+  const data = await readFile();
+  const talkerIndex = data.findIndex((talker) => Number(talker.id) === Number(id));
+  data.splice(talkerIndex, 1);
+  await writeFile(data);
+
+  res.status(204).end();
 });
