@@ -30,7 +30,7 @@ app.listen(PORT, () => {
 // Requisito 01
 app.get('/talker', async (_req, res) => {
   const data = await readFile();
-  if (data.lenght === 0) {
+  if (data.length === 0) {
     res.status(200).json([]);
   } else {
     res.status(200).json(data);
